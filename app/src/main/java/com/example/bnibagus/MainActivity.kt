@@ -18,7 +18,9 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -70,13 +73,21 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                    color = MaterialTheme.colorScheme.background,
 
-                    val jadicode by remember {
-                        mutableStateOf("")
+
+                    ) {
+
+//                    val jadicode by remember {
+//                        mutableStateOf("")
+//                    }
+
+//                    val state by viewModel.state.collectAsState()
+//                    TransaksiScreen(state = state, onEvent = viewModel::onEvent )
+                    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth(),horizontalAlignment=Alignment.CenterHorizontally ) {
+                        DisplayNav()
                     }
-                    DisplayNav()                }
+                }
             }
         }
     }
@@ -91,160 +102,175 @@ class MainActivity : ComponentActivity() {
             }
         }
     )
-}
 
-@Composable
-fun DisplayNav()
-{
-    //nav conttroller
-    val navController = rememberNavController()
-    NavHost(navController = navController , startDestination = "First Screen"){
-
-        composable(route = "First Screen"){
-            FirstScreen(navController)
-        }
-        composable(route = "Scan QR"){
-            ScanQR(navController)
-        }
-        composable(route = "Second Screen"){
-            SecondScreen(navController)
-        }
-
-    }
-}
-@Composable
-fun FirstScreen(navController: NavController)
-{
-    Column(
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(onClick = { navController.navigate("Scan QR")}) {
-            Text(text = "Scan QR")
-        }
-    }
-
-
-}
-@Composable
-fun ScanQR(navController: NavController)
-{
-    var code by remember {
-        mutableStateOf("")
-    }
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProvider = remember {
-        ProcessCameraProvider.getInstance(context)
-    }
-
-    var hasCampermision by remember {
-        mutableStateOf( ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.CAMERA
-        )== PackageManager.PERMISSION_GRANTED
-        )
-    }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = {granted->
-            hasCampermision = granted
-
-        }
-    )
-    LaunchedEffect(key1 = true )
+    @Composable
+    fun DisplayNav()
     {
-        launcher.launch(android.Manifest.permission.CAMERA)
-    }
+        //nav conttroller
+        val navController = rememberNavController()
+        NavHost(navController = navController , startDestination = "First Screen"){
 
-
-
-//                    val state by viewModel.state.collectAsState()
-//                    TransaksiScreen(state = state, onEvent = viewModel::onEvent )
-
-
-    if(hasCampermision)
-    {
-        AndroidView(factory = {context ->
-            val previewView = PreviewView(context)
-
-            val preview =androidx.camera.core.Preview.Builder().build()
-            val selector = CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
-
-            preview.setSurfaceProvider(previewView.surfaceProvider)
-            val imageAnalisys = ImageAnalysis.Builder()
-                .setTargetResolution(Size(previewView.width,previewView.height))
-                .setBackpressureStrategy(STRATEGY_BLOCK_PRODUCER)
-                .build()
-            imageAnalisys.setAnalyzer(
-                ContextCompat.getMainExecutor(context),
-                QrCodeAnalyzer{ result ->
-                    code = result
-                }
-            )
-            try {
-                cameraProvider.get().bindToLifecycle(
-                    lifecycleOwner,
-                    selector,
-                    preview,
-                    imageAnalisys
-                )
-            }catch (e : Exception)
-            {
-                e.printStackTrace()
+            composable(route = "First Screen"){
+                FirstScreen(navController)
             }
-            previewView
-        },
-//                        modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = code,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp)
+            composable(route = "Scan QR"){
+                ScanQR(navController)
+            }
+            composable(route = "Second Screen"){
+                SecondScreen(navController)
+            }
+//            composable(route = "Second Screen" + "{code}"){
+//                val usercode = it.arguments?.get("code")
+//                SecondScreen(navController,usercode.toString())
+//            }
+            composable(route = "Third Screen"){
+                ThirdScreen(navController)
+            }
+            composable(route = "Transaksi Screen"){
+                val state by viewModel.state.collectAsState()
+                TransaksiScreen(navController,state = state, onEvent = viewModel::onEvent )
+            }
 
-        )
-
+        }
     }
-    if(code.toString()!="")
+    @Composable
+    fun FirstScreen(navController: NavController)
     {
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
+            Button(onClick = { navController.navigate("Scan QR")}, modifier = Modifier.size(width = 300.dp,height =100.dp )) {
+                Text(text = "Scan QR")
+            }
+        }
+
+
+    }
+    @Composable
+    fun ScanQR(navController: NavController)
+    {
+        var code by remember {
+            mutableStateOf("")
+        }
+        val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
+        val cameraProvider = remember {
+            ProcessCameraProvider.getInstance(context)
+        }
+
+        var hasCampermision by remember {
+            mutableStateOf( ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.CAMERA
+            )== PackageManager.PERMISSION_GRANTED
+            )
+        }
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = {granted->
+                hasCampermision = granted
+
+            }
+        )
+        LaunchedEffect(key1 = true )
+        {
+            launcher.launch(android.Manifest.permission.CAMERA)
+        }
+
+
+
+
+
+
+        if(hasCampermision)
+        {
+            AndroidView(factory = {context ->
+                val previewView = PreviewView(context)
+
+                val preview =androidx.camera.core.Preview.Builder().build()
+                val selector = CameraSelector.Builder()
+                    .requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+
+                preview.setSurfaceProvider(previewView.surfaceProvider)
+                val imageAnalisys = ImageAnalysis.Builder()
+                    .setTargetResolution(Size(previewView.width,previewView.height))
+                    .setBackpressureStrategy(STRATEGY_BLOCK_PRODUCER)
+                    .build()
+                imageAnalisys.setAnalyzer(
+                    ContextCompat.getMainExecutor(context),
+                    QrCodeAnalyzer{ result ->
+                        code = result
+                        if(code!="")
+                        {
+                            navController.navigate("Second Screen/"+code.toString())
+                        }
+                    }
+                )
+                try {
+                    cameraProvider.get().bindToLifecycle(
+                        lifecycleOwner,
+                        selector,
+                        preview,
+                        imageAnalisys
+                    )
+                }catch (e : Exception)
+                {
+                    e.printStackTrace()
+                }
+                previewView
+            },
+//                        modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = code,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp)
+
+            )
+
+        }
+        if(code.toString()!="")
+        {
+        }
+    }
+
+
+    @Composable
+    fun SecondScreen(navController: NavController)
+    {
+        Button(onClick = { navController.navigate("First Screen") }) {
+            Text(text = "usercode")
+        }
+
+    }
+
+    @Composable
+    fun ThirdScreen(navController: NavController)
+    {
+        Button(onClick = { navController.navigate("First Screen") }) {
+            Text(text = "welcome to Second Screen")
+        }
+
+    }
+
+    @Composable
+    fun Greeting(name: String, modifier: Modifier = Modifier) {
+        Text(
+            text = "Hello $name!",
+            modifier = modifier
+        )
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun GreetingPreview() {
+        BNIBAGUSTheme {
+            Greeting("Android")
+        }
     }
 }
 
-
-@Composable
-fun SecondScreen(navController: NavController)
-{
-    Button(onClick = { navController.navigate("First Screen") }) {
-        Text(text = "welcome to Second Screen")
-    }
-
-}
-
-@Composable
-fun ThirdScreen(navController: NavController)
-{
-    Button(onClick = { navController.navigate("First Screen") }) {
-        Text(text = "welcome to Second Screen")
-    }
-
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BNIBAGUSTheme {
-        Greeting("Android")
-    }
-}
