@@ -28,20 +28,11 @@ import com.example.bnibagus.model.TransaksiState
 fun TransaksiScreen (
     navController: NavController,
     state: TransaksiState,
-                     onEvent:(TransaksiEvent)->Unit){
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = {
-            onEvent(TransaksiEvent.showDialog)
-
-        })
-        {
-
-
-        }
-    }, modifier = Modifier.padding(16.dp)
+    onEvent:(TransaksiEvent)->Unit){
+    Scaffold( modifier = Modifier.padding(16.dp)
     ) { padding ->
 
-        Text(text = "Transaksi Screeen")
+//        Text(text = "Transaksi Screeen")
         if(state.isAddingTransaksi==true){
             AddTransaksiDialog(state = state, onEvent =onEvent )
         }
@@ -64,14 +55,6 @@ fun TransaksiScreen (
             }
 
         }
-//        val scanLauncher = rememberLauncherForActivityResult(
-//            contract = ScanContract(),
-//            onResult = { result -> Log.i(ContentValues.TAG, "scanned code: ${result.contents}") }
-//        )
-//        Button(onClick = { scanLauncher.launch(ScanOptions()) }) {
-//            Text(text = "Scan barcode")
-//        }
-
     }
 
 }

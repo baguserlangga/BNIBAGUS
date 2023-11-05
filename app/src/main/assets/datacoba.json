@@ -1,0 +1,18 @@
+[
+  {
+  "name": "bagus",
+  "country" : "Indonesia",
+  "age" : "24"
+  },
+  {
+    "name": "ajeng",
+    "country" : "Indonesia",
+    "age" : "27"
+  },
+  {
+    "name": "mario",
+    "country" : "Italia",
+    "age" : "44"
+  }
+
+]

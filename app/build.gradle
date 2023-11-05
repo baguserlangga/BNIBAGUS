@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.bnibagus"
-        minSdk 24
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -125,4 +125,10 @@ dependencies {
 
     // Zxing
     implementation 'com.google.zxing:core:3.3.3'
+
+    implementation "androidx.compose.material:material:1.4.2"
+
+    implementation 'co.yml:ycharts:2.1.0'
+
+
 }

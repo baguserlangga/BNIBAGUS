@@ -19,7 +19,6 @@ import com.example.bnibagus.model.TransaksiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun AddTransaksiDialog (
     state : TransaksiState,
     onEvent : (TransaksiEvent)-> Unit,
