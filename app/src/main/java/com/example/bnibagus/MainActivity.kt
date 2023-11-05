@@ -158,7 +158,6 @@ class MainActivity : ComponentActivity() {
                 readjson(navController )
             }
             composable(route = Destinations.LineChart.toString()){
-
                 chart()
             }
 
@@ -462,7 +461,7 @@ class MainActivity : ComponentActivity() {
         var charChoose by remember{
             mutableStateOf("")
         }
-
+        val listChart= arrayListOf<Point>()
         val arrListTipe = ArrayList<String>()
         val  inputStream : InputStream = assets.open("data.json")
         json =  inputStream.bufferedReader().use{it.readText()}
@@ -476,10 +475,17 @@ class MainActivity : ComponentActivity() {
                 var hasil  = jsonObj.getString("data")
                     .replace("{\"month\":[","")
                     .replace("]}","")
-
+                var i=0
                 val hasilarray = hasil.split(",")
+                hasilarray.forEach{
+                    item->
+                    listChart.add(
+                        Point((i.toString()+"f").toFloat(),(item+"f").toFloat())
+                    )
+                    i++
+                }
 
-                Log.d("isinyaininya", "readjson:" +hasilarray)
+                Log.d("isinyaininyaya", "readjson:" +listChart)
             }
             else
             {
@@ -522,7 +528,12 @@ class MainActivity : ComponentActivity() {
                                 .align(alignment = Alignment.CenterHorizontally),
 
                             ) {
-                            Text(text = item.toString())
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                Text(text = item.toString(), modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth())
+                            }
 
                         }
                     }
